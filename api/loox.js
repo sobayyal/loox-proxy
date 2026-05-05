@@ -9,20 +9,20 @@ export default async function handler(req, res) {
 
   try {
     let url;
+    let headers = {
+      'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1)',
+      'Accept': 'text/html,application/xhtml+xml,application/json'
+    };
+
     if (type === 'stats') {
-      url = `https://api.loox.app/storefront/v1/products/${product_id}`;
-    } else if (type === 'reviews') {
-      url = `https://api.loox.app/storefront/v1/reviews?product_id=${product_id}&page=${Math.floor(offset/limit)+1}&per_page=${limit}`;
+      url = `https://loox.io/api/v1/products/${product_id}?api_key=${API_KEY}`;
+    } else if (type === 'dist') {
+      url = `https://loox.io/api/v1/reviews/distribution?product_id=${product_id}&api_key=${API_KEY}`;
     } else {
       url = `https://loox.io/widget/ziW7w0O4wJ/reviews/${product_id}?limit=${limit}&offset=${offset}&default_tab=automatic&language=en`;
     }
 
-    const response = await fetch(url, {
-      headers: {
-        'x-loox-access-token': API_KEY,
-        'Content-Type': 'application/json'
-      }
-    });
+    const response = await fetch(url, { headers });
     const text = await response.text();
     return res.status(200).send(text);
   } catch (err) {
