@@ -7,19 +7,20 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const { product_id, page = 1, per_page = 6 } = req.query;
+  const { product_id, offset = 0, limit = 20 } = req.query;
 
   try {
-    const response = await fetch(
-      `https://api.loox.app/storefront/v1/reviews?product_id=${product_id}&page=${page}&per_page=${per_page}`,
-      {
-        headers: {
-          'x-loox-store-id': 'ziW7w0O4wJ.b03ea943edf5f13aeb92373c039827c4da0589f14e31a469477525e39c57ca64'
-        }
+    const url = `https://loox.io/widget/ziW7w0O4wJ/reviews/${product_id}?limit=${limit}&offset=${offset}&default_tab=automatic&language=en`;
+
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1)',
+        'Accept': 'text/html,application/xhtml+xml'
       }
-    );
-    const data = await response.json();
-    return res.status(200).json(data);
+    });
+
+    const html = await response.text();
+    return res.status(200).send(html);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
