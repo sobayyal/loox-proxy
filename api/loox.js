@@ -4,27 +4,25 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const { product_id, offset = 0, limit = 20, type = 'reviews' } = req.query;
-  const API_KEY = 'lx_ak_3b73e5b1b750090137cd28d37823eb7e636f7a54507bb23ccde66d72450dc8f7';
+  const PUBLIC_STORE_ID = 'ziW7w0O4wJ.b03ea943edf5f13aeb92373c039827c4da0589f14e31a469477525e39c57ca64';
+  const { product_id, page = 1, limit = 10, type = 'reviews' } = req.query;
 
   try {
     let url;
-    let headers = {
-      'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1)',
-      'Accept': 'text/html,application/xhtml+xml,application/json'
-    };
-
-    if (type === 'stats') {
-      url = `https://loox.io/api/v1/products/${product_id}?api_key=${API_KEY}`;
-    } else if (type === 'dist') {
-      url = `https://loox.io/api/v1/reviews/distribution?product_id=${product_id}&api_key=${API_KEY}`;
+    if (type === 'bottomline') {
+      url = `https://storefrontapi.loox.io/storefront/v1/store/${PUBLIC_STORE_ID}/product-reviews/bottomline/${product_id}`;
     } else {
-      url = `https://loox.io/widget/ziW7w0O4wJ/reviews/${product_id}?limit=${limit}&offset=${offset}&default_tab=automatic&language=en`;
+      url = `https://storefrontapi.loox.io/storefront/v1/store/${PUBLIC_STORE_ID}/product-reviews?product_id=${product_id}&page=${page}&limit=${limit}&sort=featured`;
     }
 
-    const response = await fetch(url, { headers });
-    const text = await response.text();
-    return res.status(200).send(text);
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/json',
+        'Origin': 'https://nobltravel.myshopify.com'
+      }
+    });
+    const data = await response.json();
+    return res.status(200).json(data);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
