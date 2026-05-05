@@ -8,8 +8,8 @@ export default async function handler(req, res) {
 
   try {
     let url;
-    if (type === 'dist') {
-      url = `https://loox.io/widget/ziW7w0O4wJ/dist/${product_id}`;
+    if (type === 'rating') {
+      url = `https://loox.io/widget/ziW7w0O4wJ/rating?product_id=${product_id}`;
     } else {
       url = `https://loox.io/widget/ziW7w0O4wJ/reviews/${product_id}?limit=${limit}&offset=${offset}&default_tab=automatic&language=en`;
     }
@@ -17,11 +17,11 @@ export default async function handler(req, res) {
     const response = await fetch(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1)',
-        'Accept': 'text/html,application/xhtml+xml'
+        'Accept': 'text/html,application/xhtml+xml,application/json'
       }
     });
-    const html = await response.text();
-    return res.status(200).send(html);
+    const text = await response.text();
+    return res.status(200).send(text);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
