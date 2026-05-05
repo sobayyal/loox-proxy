@@ -8,8 +8,12 @@ export default async function handler(req, res) {
 
   try {
     let url;
-    if (type === 'rating') {
-      url = `https://loox.io/widget/ziW7w0O4wJ/rating?product_id=${product_id}`;
+    if (type === 'stats') {
+      url = `https://loox.io/widget/ziW7w0O4wJ/products/${product_id}/stats`;
+    } else if (type === 'aggregate') {
+      url = `https://loox.io/widget/ziW7w0O4wJ/aggregate?product_id=${product_id}`;
+    } else if (type === 'summary') {
+      url = `https://loox.io/widget/ziW7w0O4wJ/summary?product_id=${product_id}`;
     } else {
       url = `https://loox.io/widget/ziW7w0O4wJ/reviews/${product_id}?limit=${limit}&offset=${offset}&default_tab=automatic&language=en`;
     }
