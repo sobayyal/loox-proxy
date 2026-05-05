@@ -5,23 +5,22 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const { product_id, offset = 0, limit = 20, type = 'reviews' } = req.query;
+  const API_KEY = 'lx_ak_3b73e5b1b750090137cd28d37823eb7e636f7a54507bb23ccde66d72450dc8f7';
 
   try {
     let url;
     if (type === 'stats') {
-      url = `https://loox.io/widget/ziW7w0O4wJ/products/${product_id}/stats`;
-    } else if (type === 'aggregate') {
-      url = `https://loox.io/widget/ziW7w0O4wJ/aggregate?product_id=${product_id}`;
-    } else if (type === 'summary') {
-      url = `https://loox.io/widget/ziW7w0O4wJ/summary?product_id=${product_id}`;
+      url = `https://api.loox.app/storefront/v1/products/${product_id}`;
+    } else if (type === 'reviews') {
+      url = `https://api.loox.app/storefront/v1/reviews?product_id=${product_id}&page=${Math.floor(offset/limit)+1}&per_page=${limit}`;
     } else {
       url = `https://loox.io/widget/ziW7w0O4wJ/reviews/${product_id}?limit=${limit}&offset=${offset}&default_tab=automatic&language=en`;
     }
 
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1)',
-        'Accept': 'text/html,application/xhtml+xml,application/json'
+        'x-loox-access-token': API_KEY,
+        'Content-Type': 'application/json'
       }
     });
     const text = await response.text();
